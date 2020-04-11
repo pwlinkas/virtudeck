@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VirtuDeck</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+    integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="text-center">
+      <div class="display-4 page-title">VirtuDeck</div>
+      <p class="lead">Your custom deck of cards, shuffled and ready!</p>
+    </div>
+    <h2>Setup
+      <span class="float-right">
+        <i id="setup-show" onclick="setupToggleHide();" class="fas fa-chevron-down"></i>
+      </span>
+    </h2>
+    <div class="game-setup">
+      <form id="setup" onsubmit="setupComplete();">
+        <div class="form-group">
+          <label for="setup-card-content">Card content</label>
+          <textarea class="form-control" id="setup-card-content" rows="5"></textarea>
+          <small class="form-text text-muted">One card per line. Supports basic HTML.</small>
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-lg btn-success" onclick="setupComplete();">Go!</button>
+        </div>
+      </form>
+      <hr />
+    </div>
+    <div id="deck" class="deck d-none">
+      <h2>Draw a card</h2>
+      <div class="active-card">
+        <p id="card-text" class="active-card-text"></p>
+      </div>
+      <p>
+        <button class="btn btn-lg btn-success" onclick="drawCard();">Draw</button>
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    // SETUP
+    let Deck;
+    let CardList = [
+      "This is a default card.",
+      "This is another default card.",
+    ];
+
+    function setupToggleHide() {
+      let form = document.getElementById('setup');
+      form.classList.toggle('d-none');
+    }
+
+    function setupComplete() {
+      let setupCardContent = document.getElementById('setup-card-content').value;
+      let setupCards = setupCardContent.split('\n');
+
+      for (let i = 0; i < setupCards.length; i++) {
+        if (setupCards[i] == "") {
+          setupCards.splice(i, 1);
+          i--;
+        }
+      }
+
+      if (setupCards.length > 0) {
+        CardList = [];
+        CardList = setupCards.slice();
+
+        console.log("INFO: The following cards were parsed.");
+        console.log(CardList);
+
+        refillCards();
+        document.getElementById('setup').classList.add('d-none');
+        document.getElementById('deck').classList.remove('d-none');
+      }
+    }
+
+    function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refillCards() {
+      Deck = [];
+      Deck = CardList.slice();
+      Deck = shuffle(Deck);
+      console.log('INFO: Deck was refilled and shuffled.');
+    }
+
+    // GAME
+    function drawCard() {
+      if (Deck.length < 1) {
+        refillCards();
+      }
+
+      let card = Deck.pop();
+      document.getElementById('card-text').innerHTML = card;
+      console.log(card);
+    }
+
+    refillCards();
+  </script>
+</body>
+
+</html>
